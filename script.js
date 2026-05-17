@@ -76,13 +76,6 @@ function initEventListeners() {
         saveStateDebounced();
         showToast('已清除 DeepSeek API Key', 'success');
     });
-    const aiAcceptBtn = $('ai-accept-btn');
-    if (aiAcceptBtn) aiAcceptBtn.addEventListener('click', openAIReviewDialog);
-    const aiIgnoreBtn = $('ai-ignore-btn');
-    if (aiIgnoreBtn) aiIgnoreBtn.addEventListener('click', () => {
-        hideAIAnalysisPanel();
-        generateWordCloud();
-    });
     const aiReviewClose = $('ai-review-close');
     if (aiReviewClose) aiReviewClose.addEventListener('click', closeAIReviewDialog);
     const aiCancelSelectionBtn = $('ai-cancel-selection-btn');
