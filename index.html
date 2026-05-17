@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词云生成器 Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+    <base target="_blank">
+    <base target="_blank">
+<base target="_blank">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>☁️ 词云生成器</h1>
+                <p class="subtitle">智能中文文本可视化</p>
+            </div>
+
+            <div class="panel-section">
+                <h3>📄 文本输入</h3>
+                <div class="drop-zone" id="drop-zone">
+                    <div class="drop-zone-content">
+                        <span class="drop-icon">📁</span>
+                        <p>拖拽 TXT 文件到此处</p>
+                        <span class="drop-hint">或点击粘贴文本</span>
+                    </div>
+                    <input type="file" id="file-input" accept=".txt,.md,.csv" hidden>
+                </div>
+                <textarea id="text-input" placeholder="在此粘贴中文文本...&#10;支持文章、评论、聊天记录等&#10;文本越长，词云效果越丰富"></textarea>
+                <div class="input-actions">
+                    <button class="btn-text" id="demo-btn" type="button">📖 加载示例文本</button>
+                    <span style="flex:1"></span>
+                    <span class="shortcut-hint">Ctrl + Enter 生成</span>
+                </div>
+                <div class="text-stats" id="text-stats"></div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🤖 AI 智能分析（可选）</h3>
+                <div class="input-group full">
+                    <label>DeepSeek API Key</label>
+                    <input type="password" id="api-key" placeholder="请输入 DeepSeek API Key">
+                </div>
+                <div class="control-row">
+                    <button class="btn-primary" id="ai-analyze-btn" type="button">🔍 AI 分析文本</button>
+                    <button class="btn-secondary" id="ai-clear-api-btn" type="button">清除 API Key</button>
+                </div>
+            </div>
+
+            
+
+            <div class="panel-section">
+                <h3>🎨 画布设置</h3>
+                <div class="control-row">
+                    <div class="input-group">
+                        <label>宽度 (px)</label>
+                        <input type="number" id="width" value="1200" min="400" max="4000" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label>高度 (px)</label>
+                        <input type="number" id="height" value="800" min="300" max="3000" step="100">
+                    </div>
+                </div>
+                <div class="preset-sizes">
+                    <button class="chip" data-w="800" data-h="600">4:3</button>
+                    <button class="chip active" data-w="1200" data-h="800">3:2</button>
+                    <button class="chip" data-w="1920" data-h="1080">16:9</button>
+                    <button class="chip" data-w="1000" data-h="1000">1:1</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚙️ 生成参数</h3>
+                <div class="control-row">
+                    <div class="input-group full">
+                        <label>旋转概率 <span id="rotate-val">50%</span></label>
+                        <input type="range" id="rotate-ratio" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🌈 配色方案</h3>
+                <div class="color-presets">
+                    <div class="color-card active" data-theme="viridis">
+                        <div class="color-strip"
+                            style="background: linear-gradient(90deg, #440154, #31688e, #35b779, #fde725);"></div>
+                        <span>Viridis</span>
+                    </div>
+                    <div class="color-card" data-theme="plasma">
+                        <div class="color-strip"
+                            style="background: linear-gradient(90deg, #0d0887, #7e03a8, #cc4778, #f0f921);"></div>
+                        <span>Plasma</span>
+                    </div>
+                    <div class="color-card" data-theme="cool">
+                        <div class="color-strip"
+                            style="background: linear-gradient(90deg, #6e40aa, #417de0, #1ac7c2, #d8f224);"></div>
+                        <span>Cool</span>
+                    </div>
+                    <div class="color-card" data-theme="warm">
+                        <div class="color-strip"
+                            style="background: linear-gradient(90deg, #8c2a00, #ff6e00, #ffc400, #ffeb90);"></div>
+                        <span>Warm</span>
+                    </div>
+                    <div class="color-card" data-theme="ocean">
+                        <div class="color-strip"
+                            style="background: linear-gradient(90deg, #001219, #005f73, #0a9396, #94d2bd, #e9d8a6);">
+                        </div>
+                        <span>Ocean</span>
+                    </div>
+                    <div class="color-card" data-theme="random">
+                        <div class="color-strip"
+                            style="background: conic-gradient(from 0deg, #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);">
+                        </div>
+                        <span>随机彩色</span>
+                    </div>
+                </div>
+                <div class="control-row" style="margin-top: 12px;">
+                    <div class="input-group full">
+                        <label>背景颜色</label>
+                        <div class="bg-options">
+                            <button class="bg-btn active" data-bg="#ffffff">⚪ 白</button>
+                            <button class="bg-btn" data-bg="#0f172a">⚫ 黑</button>
+                            <button class="bg-btn" data-bg="#f8fafc">灰</button>
+                            <button class="bg-btn" data-bg="transparent">透明</button>
+                            <input type="color" id="custom-bg" value="#ffffff" title="自定义颜色">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section foldable collapsed">
+                <h3 class="foldable-header">
+                    🚫 停用词设置
+                    <span class="toggle-icon">▼</span>
+                </h3>
+                <div class="foldable-content">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="use-default-stopwords" checked>
+                        <span class="checkmark"></span>
+                        使用默认停用词 (85个常见虚词)
+                    </label>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>自定义停用词 <span class="hint">空格/逗号/换行分隔</span></label>
+                        <textarea id="custom-stopwords" rows="3" placeholder="公司 产品 名称...&#10;支持多字词匹配"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section foldable collapsed">
+                <h3 class="foldable-header">
+                    🔒 完整词保护
+                    <span class="toggle-icon">▼</span>
+                </h3>
+                <div class="foldable-content">
+                    <div class="input-group">
+                        <label>不拆分的词 <span class="hint">空格/逗号/换行分隔</span></label>
+                        <textarea id="custom-fullwords" rows="3" placeholder="人工智能 机器学习...&#10;这些词将保持完整"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-section foldable collapsed">
+                <h3 class="foldable-header">
+                    🔗 合并词组
+                    <span class="toggle-icon">▼</span>
+                </h3>
+                <div class="foldable-content">
+                    <div class="input-group">
+                        <label>近义词合并 <span class="hint">每行一组，第一个为代表词，空格分隔</span></label>
+                        <textarea id="custom-mergegroups" rows="4" placeholder="人工智能 AI 人工智慧&#10;机器学习 ML&#10;每行第一个词为代表词，其余为被合并词"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="gen-btn" class="btn-primary">
+                    <span class="btn-icon">✨</span>
+                    生成词云
+                </button>
+                <button id="clear-btn" class="btn-secondary" type="button">
+                    <span class="btn-icon">🗑️</span>
+                    清空
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="canvas-area" id="canvas-area">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">☁️</div>
+                    <h2>准备生成词云</h2>
+                    <p>在左侧输入文本并点击「生成词云」按钮</p>
+                    <button class="btn-text" id="demo-btn-empty" type="button" style="margin-top:12px;">📖
+                        加载示例文本体验功能</button>
+                </div>
+                <div class="canvas-wrapper" id="canvas-wrapper" style="display: none;">
+                    <canvas id="wordcloud-canvas"></canvas>
+                    <div class="canvas-overlay">
+                        <button id="regen-btn" class="btn-float" title="重新生成 (Ctrl+Enter)">
+                            <span>🔄</span>
+                        </button>
+                        <button id="download-btn" class="btn-float" title="下载 PNG (Ctrl+S)">
+                            <span>📥</span>
+                        </button>
+                        <button id="download-json-btn" class="btn-float" title="导出词频 JSON">
+                            <span>📋</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="loading-overlay" id="loading-overlay" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>正在分析文本并生成词云...</p>
+                    <p class="loading-hint">大文本可能需要几秒钟，请稍候</p>
+                </div>
+            </div>
+
+            <div class="results-panel" id="results-panel" style="display: none;">
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-total">0</span>
+                        <span class="stat-label">总词数</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-unique">0</span>
+                        <span class="stat-label">不重复词</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-stopwords">0</span>
+                        <span class="stat-label">停用词</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="stat-fullwords">0</span>
+                        <span class="stat-label">完整词</span>
+                    </div>
+                </div>
+                <div class="word-ranking">
+                    <h4>🏆 词频排行 Top 30</h4>
+                    <div class="word-list" id="word-list"></div>
+                </div>
+                <div class="results-actions">
+                    <button class="btn-text" id="download-csv-btn" type="button">📊 导出词频 CSV</button>
+                    <button class="btn-text" id="download-json-btn-2" type="button">📋 导出词频 JSON</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <footer class="app-footer">
+        <span>词云生成器 Pro · 智能中文文本可视化工具</span>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <div class="modal-backdrop" id="ai-review-modal" style="display: none;">
+                <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="ai-review-title">
+                    <div class="modal-header">
+                        <div>
+                            <h3 id="ai-review-title">AI 分析结果与采纳</h3>
+                            <p class="modal-subtitle">请勾选要采纳的合并词组、停用词和完整词。</p>
+                        </div>
+                        <button type="button" class="modal-close" id="ai-review-close">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="analysis-summary" id="ai-review-summary"></div>
+                        <div class="review-section">
+                            <strong>合并词组</strong>
+                            <div class="checkbox-list" id="ai-review-merge-list"></div>
+                        </div>
+                        <div class="review-section">
+                            <strong>新增停用词</strong>
+                            <div class="checkbox-list" id="ai-review-stopwords-list"></div>
+                        </div>
+                        <div class="review-section">
+                            <strong>新增完整词</strong>
+                            <div class="checkbox-list" id="ai-review-fullwords-list"></div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-primary" id="ai-apply-selection-btn" type="button">✅ 采纳选中结果</button>
+                        <button class="btn-secondary" id="ai-cancel-selection-btn" type="button">取消</button>
+                    </div>
+                </div>
+            </div>
+</body>
+
+</html>
