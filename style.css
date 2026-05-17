@@ -41,9 +41,10 @@ body {
 /* ===== 布局 ===== */
 .app-container {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     max-width: 1600px;
     margin: 0 auto;
+    overflow: hidden;
 }
 
 .sidebar {
@@ -76,6 +77,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow-y: auto;
+    height: 100%;
 }
 
 /* ===== 侧边栏头部 ===== */
@@ -1106,10 +1109,13 @@ input[type="color"] {
         border-right: none;
         border-bottom: 1px solid var(--border);
         max-height: none;
+        overflow-y: visible;
     }
 
     .main-content {
         padding: 16px;
+        overflow-y: visible;
+        height: auto;
     }
 
     .stats-bar {
